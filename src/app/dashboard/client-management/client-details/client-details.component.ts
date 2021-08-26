@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { AppStateService } from 'src/app/app-state.service';
 
 @Component({
   selector: 'app-client-details',
@@ -7,9 +8,10 @@ import { Component, OnInit } from '@angular/core';
 })
 export class ClientDetailsComponent implements OnInit {
 
-  constructor() { }
+  constructor(private appStateService: AppStateService) { }
 
   ngOnInit(): void {
+    this.appStateService.sidebarState.next('ClientDetails');
   }
 
 }
