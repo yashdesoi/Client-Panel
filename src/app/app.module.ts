@@ -11,14 +11,14 @@ import { NotFoundComponent } from './not-found/not-found.component';
 import { DashboardComponent } from './dashboard/dashboard.component';
 import { LoginComponent } from './auth/login/login.component';
 import { RegisterComponent } from './auth/register/register.component';
-import { ClientListComponent } from './dashboard/client-management/client-list/client-list.component';
-import { ClientDetailsComponent } from './dashboard/client-management/client-details/client-details.component';
-import { AddClientComponent } from './dashboard/client-management/add-client/add-client.component';
-import { EditClientComponent } from './dashboard/client-management/edit-client/edit-client.component';
+import { ClientListComponent } from './dashboard/client-list/client-list.component';
+import { ClientDetailsComponent } from './dashboard/client-details/client-details.component';
+import { AddClientComponent } from './dashboard/add-client/add-client.component';
+import { EditClientComponent } from './dashboard/edit-client/edit-client.component';
 import { SettingsComponent } from './settings/settings.component';
 
 import { environment as env } from 'src/environments/environment';
-import { SidebarComponent } from './dashboard/sidebar/sidebar.component';
+import { ReactiveFormsModule } from '@angular/forms';
 
 @NgModule({
   declarations: [
@@ -32,11 +32,11 @@ import { SidebarComponent } from './dashboard/sidebar/sidebar.component';
     ClientDetailsComponent,
     AddClientComponent,
     EditClientComponent,
-    SettingsComponent,
-    SidebarComponent
+    SettingsComponent
   ],
   imports: [
     BrowserModule,
+    ReactiveFormsModule,
     AngularFireModule.initializeApp(env.firebase),
     AngularFirestoreModule,
     AngularFireAuthModule,

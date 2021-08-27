@@ -1,5 +1,4 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { AppStateService } from 'src/app/app-state.service';
 import { ClientService } from 'src/app/client.service';
 import { Client } from 'src/models/Client';
 
@@ -10,15 +9,17 @@ import { Client } from 'src/models/Client';
 })
 export class ClientListComponent implements OnInit {
   clients: Client[] = [];
+  showSpinner: boolean;
   totalOwed = 0;
 
-  constructor(private clientService: ClientService,
-              private appStateService: AppStateService) { }
+  constructor(private clientService: ClientService) { }
 
   ngOnInit(): void {
-    this.appStateService.sidebarState.next('ClientList');
+    this.showSpinner = true;
     this.clientService.getClients().subscribe(clients => {
+      console.log(clients);
       this.clients = clients;
+      this.showSpinner = false;
       this.calculateTotalOwed();
     });
   }
