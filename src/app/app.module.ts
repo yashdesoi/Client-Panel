@@ -18,7 +18,9 @@ import { EditClientComponent } from './dashboard/edit-client/edit-client.compone
 import { SettingsComponent } from './settings/settings.component';
 
 import { environment as env } from 'src/environments/environment';
-import { ReactiveFormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { FlashMessagesModule } from 'angular2-flash-messages';
+import { EditBalanceComponent } from './dashboard/client-details/edit-balance/edit-balance.component';
 
 @NgModule({
   declarations: [
@@ -32,14 +34,17 @@ import { ReactiveFormsModule } from '@angular/forms';
     ClientDetailsComponent,
     AddClientComponent,
     EditClientComponent,
-    SettingsComponent
+    SettingsComponent,
+    EditBalanceComponent
   ],
   imports: [
     BrowserModule,
+    FormsModule,
     ReactiveFormsModule,
     AngularFireModule.initializeApp(env.firebase),
     AngularFirestoreModule,
     AngularFireAuthModule,
+    FlashMessagesModule.forRoot(),
     AppRoutingModule
   ],
   providers: [],

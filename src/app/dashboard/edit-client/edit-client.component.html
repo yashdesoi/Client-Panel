@@ -1,1 +1,119 @@
-<p>edit-client works!</p>
+<a class="btn btn-link"
+   routerLink="../">
+  <i class="fa fa-arrow-circle-o-left"></i> Back to details
+</a>
+<div class="card mb-3">
+  <div class="card-header">
+    Add client
+  </div>
+  <div class="card-body">
+    
+    <div class="container">
+      <form autocomplete="off"
+            class="was-validate" 
+            [formGroup]="form"
+            (ngSubmit)="onUpdateClient()">
+        <div class="row">
+          <!-- First name -->
+          <div class="col-md-6 form-group">
+            <label for="firstName">Firstname:</label>
+            <input type="text"
+                   id="firstName"
+                   class="form-control"
+                   [ngClass]="{
+                    'is-invalid': (firstName.touched || firstName.dirty) && firstName.errors,
+                    'is-valid': (firstName.touched || firstName.dirty) && !firstName.errors
+                   }"
+                   formControlName="firstName">
+            <small class="text-danger"
+                   *ngIf="(firstName.touched ||
+                           firstName.dirty) &&
+                           firstName.errors?.required">
+              Firstname is required
+            </small>
+          </div>
+          <!-- Last name -->
+          <div class="col-md-6 form-group">
+            <label for="lastName">Lastname:</label>
+            <input type="lastName"
+                   id="lastName"
+                   class="form-control"
+                   [ngClass]="{
+                    'is-invalid': (lastName.touched || lastName.dirty) && lastName.errors,
+                    'is-valid': (lastName.touched || lastName.dirty) && !lastName.errors
+                   }"
+                   formControlName="lastName">
+            <small class="text-danger"
+                   *ngIf="(lastName.touched ||
+                           lastName.dirty) &&
+                           lastName.errors?.required">
+              Lastname is required
+            </small>
+          </div>
+        </div>
+        <!-- Phone number -->
+        <div class="form-group">
+          <label for="phone">phone:</label>
+          <input type="text"
+                 id="phone"
+                 class="form-control"
+                 [ngClass]="{
+                  'is-invalid': (phone.touched || phone.dirty) && phone.errors,
+                  'is-valid': (phone.touched || phone.dirty) && !phone.errors
+                 }"
+                 formControlName="phone">
+          <ng-container *ngIf="phone.touched ||
+                               phone.dirty">
+            <small class="text-danger"
+                   *ngIf="phone.errors?.required">Phone number required</small>
+            <small class="text-danger"
+                   *ngIf="phone.errors?.pattern">Invalid phone number</small>
+          </ng-container>
+        </div>
+        <!-- Email address -->
+        <div class="form-group">
+          <label for="email">Email:</label>
+          <input type="text"
+                 id="email"
+                 class="form-control"
+                 [ngClass]="{
+                  'is-invalid': (email.touched || email.dirty) && email.errors,
+                  'is-valid': (email.touched || email.dirty) && !email.errors
+                 }"
+                 formControlName="email">
+          <ng-container *ngIf="email.touched ||
+                               email.dirty">
+            <small class="text-danger"
+                   *ngIf="email.errors?.required">Email is required</small>
+            <small class="text-danger"
+                   *ngIf="email.errors?.pattern">Invalid email</small>
+          </ng-container>
+        </div>
+        <!-- Balance -->
+        <div class="form-group">
+          <label for="balance">Balance:</label>
+          <input type="number"
+                 id="balance"
+                 class="form-control"
+                 [ngClass]="{
+                  'is-invalid': (balance.touched || balance.dirty) && balance.errors,
+                  'is-valid': (balance.touched || balance.dirty) && !balance.errors
+                 }"
+                 formControlName="balance">
+          <ng-container *ngIf="balance.touched ||
+                               balance.dirty">
+            <small class="text-danger"
+                   *ngIf="balance.errors?.required">Balance is required</small>
+            <small class="text-danger"
+                   *ngIf="balance.errors?.min">Minimum balance is $0</small>
+          </ng-container>
+        </div>
+        <button class="btn btn-success"
+                [disabled]="form.invalid"
+                [style.cursor]="form.invalid ? 'not-allowed' : ''"
+                type="submit">Submit</button>
+      </form>
+    </div>
+
+  </div>
+</div>

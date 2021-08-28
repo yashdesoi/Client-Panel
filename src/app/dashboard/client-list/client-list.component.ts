@@ -10,14 +10,14 @@ import { Client } from 'src/models/Client';
 export class ClientListComponent implements OnInit {
   clients: Client[] = [];
   showSpinner: boolean;
-  totalOwed = 0;
+  totalOwed: number;
 
   constructor(private clientService: ClientService) { }
 
   ngOnInit(): void {
     this.showSpinner = true;
     this.clientService.getClients().subscribe(clients => {
-      console.log(clients);
+      this.totalOwed = 0;
       this.clients = clients;
       this.showSpinner = false;
       this.calculateTotalOwed();
