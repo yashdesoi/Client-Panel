@@ -3,11 +3,11 @@ import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FlashMessagesService } from 'angular2-flash-messages';
 import { Subscription } from 'rxjs';
-import { ClientService } from 'src/app/client.service';
-import { ClientResources } from '../client-resources';
+import { ClientManagementService } from 'src/app/dashboard/client-management/client-management.service';
+import { AppResources } from '../../../app-resources';
 
-const rePhone = ClientResources.PHONE_REGEX;
-const reEmail = ClientResources.EMAIL_REGEX;
+const rePhone = AppResources.PHONE_REGEX;
+const reEmail = AppResources.EMAIL_REGEX;
 
 @Component({
   selector: 'app-add-client',
@@ -36,11 +36,13 @@ export class AddClientComponent implements OnInit, OnDestroy {
       Validators.min(0)
     ]
   );
+
+  // Subscriptions
   private subscription: Subscription;
 
   constructor(private router: Router,
               private route: ActivatedRoute,
-              private clientService: ClientService) { }
+              private clientManagementService: ClientManagementService) { }
 
   ngOnInit(): void {
     this.form = new FormGroup({
@@ -53,7 +55,7 @@ export class AddClientComponent implements OnInit, OnDestroy {
       'balance': this.balance
     });
 
-    this.subscription = this.clientService.clientAdded.subscribe(isAdded => {
+    this.subscription = this.clientManagementService.clientAdded.subscribe(isAdded => {
       if (isAdded) {
         this.router.navigate(['../'], { relativeTo: this.route });
       }
@@ -66,7 +68,7 @@ export class AddClientComponent implements OnInit, OnDestroy {
 
   onAddClient() {
     const value = this.getFormValue();
-    this.clientService.addClient(value);
+    this.clientManagementService.addClient(value);
   }
 
   private getFormValue() {

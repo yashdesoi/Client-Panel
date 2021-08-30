@@ -2,11 +2,11 @@ import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { LoginComponent } from './auth/login/login.component';
 import { RegisterComponent } from './auth/register/register.component';
-import { AddClientComponent } from './dashboard/add-client/add-client.component';
-import { ClientDetailsComponent } from './dashboard/client-details/client-details.component';
-import { ClientListComponent } from './dashboard/client-list/client-list.component';
+import { AddClientComponent } from './dashboard/client-management/add-client/add-client.component';
+import { ClientDetailsComponent } from './dashboard/client-management/client-details/client-details.component';
+import { ClientListComponent } from './dashboard/client-management/client-list/client-list.component';
 import { DashboardComponent } from './dashboard/dashboard.component';
-import { EditClientComponent } from './dashboard/edit-client/edit-client.component';
+import { EditClientComponent } from './dashboard/client-management/edit-client/edit-client.component';
 import { NotFoundComponent } from './not-found/not-found.component';
 import { SettingsComponent } from './settings/settings.component';
 

@@ -1,1 +1,59 @@
-<p>login works!</p>
+<div class="row">
+  <div class="col-md-6 mx-auto">
+    <div class="card">
+      <div class="card-header text-center">
+        Client login
+      </div>
+      <div class="card-body">
+        
+        <div class="container">
+          <form autocomplete="off"
+                class="was-validate" 
+                [formGroup]="form"
+                (ngSubmit)="onLogin()">
+            <!-- Email address -->
+            <div class="form-group">
+              <label for="email">Email:</label>
+              <input type="text"
+                     id="email"
+                     class="form-control"
+                     [ngClass]="{
+                      'is-invalid': (email.touched || email.dirty) && email.errors,
+                      'is-valid': (email.touched || email.dirty) && !email.errors
+                     }"
+                     formControlName="email">
+              <ng-container *ngIf="email.touched ||
+                                   email.dirty">
+                <small class="text-danger"
+                       *ngIf="email.errors?.required">Email is required</small>
+                <small class="text-danger"
+                       *ngIf="email.errors?.pattern">Invalid email</small>
+              </ng-container>
+            </div>
+            <!-- Password -->
+            <div class="form-group">
+              <label for="password">Password:</label>
+              <input type="password"
+                     id="password"
+                     class="form-control"
+                     [ngClass]="{
+                      'is-invalid': (password.touched || password.dirty) && password.errors,
+                      'is-valid': (password.touched || password.dirty) && !password.errors
+                     }"
+                     formControlName="password">
+              <small class="text-danger"
+                     *ngIf="(password.touched ||
+                             password.dirty) &&
+                             password.errors?.required">Password is required</small>
+            </div>
+            <button class="btn btn-success"
+                    [disabled]="form.invalid"
+                    [style.cursor]="form.invalid ? 'not-allowed' : ''"
+                    type="submit">Submit</button>
+          </form>
+        </div>
+    
+      </div>
+    </div>
+  </div>
+</div>

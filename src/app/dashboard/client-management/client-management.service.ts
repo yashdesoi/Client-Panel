@@ -3,17 +3,19 @@ import { AngularFirestore, AngularFirestoreCollection, AngularFirestoreDocument 
 import { FlashMessagesService } from 'angular2-flash-messages';
 import { Observable, Subject, Subscription } from 'rxjs';
 import { map } from 'rxjs/operators';
-import { Client } from '../models/Client';
+import { Client } from '../../../models/Client';
 
 @Injectable({
   providedIn: 'root'
 })
-export class ClientService {
+export class ClientManagementService {
   private clientsCollection: AngularFirestoreCollection;
   private clientDocument: AngularFirestoreDocument;
-  private subscription: Subscription;
   public clientAdded = new Subject<boolean>();
   public clientUpdated = new Subject<boolean>();
+  
+  // Subscriptions
+  private subscription: Subscription;
 
   constructor(private fireStore: AngularFirestore,
               private flashMessageService: FlashMessagesService) {}
