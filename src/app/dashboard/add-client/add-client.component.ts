@@ -1,18 +1,20 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FlashMessagesService } from 'angular2-flash-messages';
+import { Subscription } from 'rxjs';
 import { ClientService } from 'src/app/client.service';
+import { ClientResources } from '../client-resources';
 
-const rePhone = /^[\+]?[(]?[0-9]{3}[)]?[-\s\.]?[0-9]{3}[-\s\.]?[0-9]{4,6}$/im;
-const reEmail = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+const rePhone = ClientResources.PHONE_REGEX;
+const reEmail = ClientResources.EMAIL_REGEX;
 
 @Component({
   selector: 'app-add-client',
   templateUrl: './add-client.component.html',
   styleUrls: ['./add-client.component.css']
 })
-export class AddClientComponent implements OnInit {
+export class AddClientComponent implements OnInit, OnDestroy {
   disableBalanceOnAdd = false;
   form: FormGroup;
   firstName = new FormControl('', Validators.required);
@@ -34,10 +36,9 @@ export class AddClientComponent implements OnInit {
       Validators.min(0)
     ]
   );
-  
+  private subscription: Subscription;
 
-  constructor(private flashMessageService: FlashMessagesService,
-              private router: Router,
+  constructor(private router: Router,
               private route: ActivatedRoute,
               private clientService: ClientService) { }
 
@@ -51,16 +52,21 @@ export class AddClientComponent implements OnInit {
       'email': this.email,
       'balance': this.balance
     });
+
+    this.subscription = this.clientService.clientAdded.subscribe(isAdded => {
+      if (isAdded) {
+        this.router.navigate(['../'], { relativeTo: this.route });
+      }
+    });
+  }
+
+  ngOnDestroy(): void {
+    this.subscription.unsubscribe();
   }
 
   onAddClient() {
     const value = this.getFormValue();
     this.clientService.addClient(value);
-    this.flashMessageService.show('New client added', {
-      cssClass: 'alert alert-success',
-      timeout: 4000
-    })
-    this.router.navigate(['../'], { relativeTo: this.route });
   }
 
   private getFormValue() {

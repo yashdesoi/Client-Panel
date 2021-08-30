@@ -1,19 +1,21 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FlashMessagesService } from 'angular2-flash-messages';
+import { Subscription } from 'rxjs';
 import { ClientService } from 'src/app/client.service';
 import { Client } from 'src/models/Client';
+import { ClientResources } from '../client-resources';
 
-const rePhone = /^[\+]?[(]?[0-9]{3}[)]?[-\s\.]?[0-9]{3}[-\s\.]?[0-9]{4,6}$/im;
-const reEmail = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+const rePhone = ClientResources.PHONE_REGEX;
+const reEmail = ClientResources.EMAIL_REGEX;
 
 @Component({
   selector: 'app-edit-client',
   templateUrl: './edit-client.component.html',
   styleUrls: ['./edit-client.component.css']
 })
-export class EditClientComponent implements OnInit {
+export class EditClientComponent implements OnInit, OnDestroy {
   client: Client;
   clientId: string;
   form: FormGroup;
@@ -31,6 +33,8 @@ export class EditClientComponent implements OnInit {
     Validators.required,
     Validators.min(0)
   ]);
+  private subscription1: Subscription;
+  private subscription2: Subscription;
 
   constructor(private clientService: ClientService,
               private route: ActivatedRoute,
@@ -48,22 +52,33 @@ export class EditClientComponent implements OnInit {
 
     this.clientId = this.route.snapshot.params.id;
 
-    this.clientService.getClient(this.clientId).subscribe(client => {
+    this.subscription1 = this.clientService.getClient(this.clientId).subscribe(client => {
       this.client = client;
       this.form.patchValue(this.client);
       this.form.markAllAsTouched();
     });
+
+    this.subscription2 = this.clientService.clientUpdated.subscribe(isUpdated => {
+      if (isUpdated) {
+        this.router.navigate(['../'], { relativeTo: this.route });
+      }
+    });
+  }
+
+  ngOnDestroy(): void {
+    this.subscription1.unsubscribe();
+    this.subscription2.unsubscribe();
   }
 
   onUpdateClient() {
-    this.client = this.form.value;
-    this.client.id = this.clientId;
-    this.clientService.updateClient(this.client);
-    this.flashMessageService.show('Client details updated', {
-      cssClass: 'alert alert-success',
-      timeout: 4000
-    });
-    this.router.navigate(['../'], { relativeTo: this.route });
+    const isEmailUpdated = this.isEmailUpdated;
+    const client: Client = this.form.value;
+    client.id = this.clientId;
+    this.clientService.updateClient(client, isEmailUpdated);
+  }
+
+  private get isEmailUpdated() {
+    return this.client.email !== this.email.value;
   }
 
 }

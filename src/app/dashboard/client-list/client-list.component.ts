@@ -1,4 +1,5 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Subscription } from 'rxjs';
 import { ClientService } from 'src/app/client.service';
 import { Client } from 'src/models/Client';
 
@@ -7,7 +8,8 @@ import { Client } from 'src/models/Client';
   templateUrl: './client-list.component.html',
   styleUrls: ['./client-list.component.css']
 })
-export class ClientListComponent implements OnInit {
+export class ClientListComponent implements OnInit, OnDestroy {
+  private subscription: Subscription;
   clients: Client[] = [];
   showSpinner: boolean;
   totalOwed: number;
@@ -16,12 +18,16 @@ export class ClientListComponent implements OnInit {
 
   ngOnInit(): void {
     this.showSpinner = true;
-    this.clientService.getClients().subscribe(clients => {
+    this.subscription = this.clientService.getClients().subscribe(clients => {
       this.totalOwed = 0;
       this.clients = clients;
       this.showSpinner = false;
       this.calculateTotalOwed();
     });
+  }
+
+  ngOnDestroy(): void {
+    this.subscription.unsubscribe();
   }
 
   public getFullname(client: Client) {
