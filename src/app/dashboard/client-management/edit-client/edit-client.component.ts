@@ -1,7 +1,6 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { FlashMessagesService } from 'angular2-flash-messages';
 import { Subscription } from 'rxjs';
 import { ClientManagementService } from 'src/app/dashboard/client-management/client-management.service';
 import { Client } from 'src/models/Client';
@@ -40,8 +39,7 @@ export class EditClientComponent implements OnInit, OnDestroy {
 
   constructor(private clientManagementService: ClientManagementService,
               private route: ActivatedRoute,
-              private router: Router,
-              private flashMessageService: FlashMessagesService) { }
+              private router: Router) { }
 
   ngOnInit(): void {
     this.form = new FormGroup({

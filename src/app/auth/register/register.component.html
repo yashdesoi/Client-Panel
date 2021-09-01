@@ -1,1 +1,86 @@
-<p>register works!</p>
+<div class="row">
+  <div class="col-md-6 mx-auto">
+    <div class="card">
+      <div class="card-body">
+        <h2 class="text-center mb-4">
+          <span class="text-primary">
+            <i class="fa fa-lock" aria-hidden="true"></i> Client Panel
+          </span> Register
+        </h2>
+        <div class="container">
+          <form autocomplete="off"
+                class="was-validate" 
+                [formGroup]="form"
+                (ngSubmit)="onRegister()">
+            <!-- Email address -->
+            <div class="form-group">
+              <label for="email">Email:</label>
+              <input type="text"
+                     id="email"
+                     class="form-control"
+                     [ngClass]="{
+                      'is-invalid': (email.touched || email.dirty) && email.errors,
+                      'is-valid': (email.touched || email.dirty) && !email.errors
+                     }"
+                     formControlName="email">
+              <ng-container *ngIf="email.touched || email.dirty">
+                <small class="text-danger"
+                       *ngIf="email.errors?.required">Email is required</small>
+                <small class="text-danger"
+                       *ngIf="email.errors?.pattern">Invalid email</small>
+              </ng-container>
+            </div>
+            <!-- Passwords -->
+            <div formArrayName="passwords">
+              <div class="form-group"
+                   *ngFor="let control of passwords.controls; let i = index;">
+                <label [for]="'password-' + i">
+                  {{ i === 0 ? 'Password:' : 'Confirm password:' }}
+                </label>
+                <input type="password"
+                       [id]="'password-' + i"
+                       class="form-control"
+                       [ngClass]="{
+                        'is-invalid': (form.get('passwords.' + i).touched ||
+                                       form.get('passwords.' + i).dirty) &&
+                                       form.get('passwords.' + i).errors,
+                        'is-valid': (form.get('passwords.' + i).touched ||
+                                     form.get('passwords.' + i).dirty) &&
+                                     !form.get('passwords.' + i).errors
+                       }"
+                       [formControlName]="i">
+                <ng-container *ngIf="(i === 0) &&
+                                     (password.touched ||
+                                     password.dirty)">
+                  <small class="text-danger"
+                         *ngIf="password.errors?.required">Password is required</small>
+                  <small class="text-danger"
+                         *ngIf="password.errors?.minlength">
+                    Password must be atleast {{ password.errors.minlength.requiredLength }} characters long
+                  </small>
+                </ng-container>
+                <ng-container *ngIf="(i === 1) &&
+                                     (confirmPassword.touched ||
+                                     confirmPassword.dirty)">
+                  <small class="text-danger"
+                         *ngIf="confirmPassword.errors?.required">
+                    Confirm your password
+                  </small>
+                  <small class="text-danger"
+                         *ngIf="confirmPassword.errors?.pattern">
+                    Incorrect password
+                  </small>
+                </ng-container>
+              </div>
+            </div>
+            <button class="btn btn-success"
+                    [disabled]="form.invalid"
+                    [style.cursor]="form.invalid ? 'not-allowed' : ''"
+                    type="submit">Submit</button>
+          </form>
+        </div>
+    
+      </div>
+    </div>
+  </div>
+</div>

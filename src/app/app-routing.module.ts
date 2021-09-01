@@ -9,11 +9,14 @@ import { DashboardComponent } from './dashboard/dashboard.component';
 import { EditClientComponent } from './dashboard/client-management/edit-client/edit-client.component';
 import { NotFoundComponent } from './not-found/not-found.component';
 import { SettingsComponent } from './settings/settings.component';
+import { AuthGuard } from './auth/auth.guard';
+import { AppGuard } from './app.guard';
 
 const routes: Routes = [
   {
     path: '',
     component: DashboardComponent,
+    canActivateChild: [AppGuard],
     children: [
       {
         path: '',
@@ -44,10 +47,12 @@ const routes: Routes = [
   },
   {
     path: 'login',
+    canActivate: [AuthGuard],
     component: LoginComponent
   },
   {
     path: 'register',
+    canActivate: [AuthGuard],
     component: RegisterComponent
   },
   {

@@ -41,8 +41,8 @@ export class ClientDetailsComponent implements OnInit, OnDestroy {
   }
 
   onDeleteClient() {
-    const choice = confirm('Are you sure you want to delete this client?');
-    if (choice) {
+    const isConfirmed = confirm('Are you sure you want to delete this client?');
+    if (isConfirmed) {
       this.clientManagementService.deleteClient(this.client.id);
       this.router.navigate(['../'], { relativeTo: this.route });
     }

@@ -3,16 +3,27 @@
     <a class="navbar-brand"
        routerLink="/">Client Panel</a>
     <ul class="navbar-nav">
-      <li class="nav-item">
-        <a class="nav-link"
-           routerLink="/login"
-           routerLinkActive="active">Login</a>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link"
-           routerLink="/register"
-           routerLinkActive="active">Register</a>
-      </li>
+      <ng-container *ngIf="isAuthenticated; else auth">
+        <li class="nav-item active">
+          <a class="nav-link">{{ loggedinUserEmail }}</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link logout-btn"
+             (click)="onLogout()">Logout</a>
+        </li>
+      </ng-container>
+      <ng-template #auth>
+        <li class="nav-item">
+          <a class="nav-link"
+             routerLink="/login"
+             routerLinkActive="active">Login</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link"
+             routerLink="/register"
+             routerLinkActive="active">Register</a>
+        </li>
+      </ng-template>
     </ul>
   </div>
 </nav>
