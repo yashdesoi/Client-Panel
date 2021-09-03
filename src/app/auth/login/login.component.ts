@@ -3,7 +3,7 @@ import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { AppResources } from 'src/app/app-resources';
-import { AuthService } from '../auth.service';
+import { AuthService } from '../../../services/auth.service';
 
 const reEmail = AppResources.EMAIL_REGEX;
 

@@ -1,7 +1,8 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { Subscription } from 'rxjs';
-import { AuthService } from '../auth/auth.service';
+import { AuthService } from '../../services/auth.service';
+import { SettingsService } from '../../services/settings.service';
 
 @Component({
   selector: 'app-navbar',
@@ -11,28 +12,33 @@ import { AuthService } from '../auth/auth.service';
 export class NavbarComponent implements OnInit, OnDestroy {
   isAuthenticated: boolean;
   loggedinUserEmail: string;
+  allowRegistration: boolean;
 
   // Subscriptions
-  private subscription: Subscription;
+  private subscription1: Subscription;
+  private subscription2: Subscription;
 
   constructor(private authService: AuthService,
-              private router: Router) { }
+              private settingsService: SettingsService,
+              private router: Router) {}
 
   ngOnInit(): void {
-    this.subscription = this.authService.getAuthState.subscribe(authObject => {
-      if (authObject) {
+    this.subscription1 = this.authService.getAuthState.subscribe(firebaseUser => {
+      if (firebaseUser) {
         this.isAuthenticated = true;
-        this.loggedinUserEmail = authObject.email;
+        this.loggedinUserEmail = firebaseUser.email;
       } else {
         this.isAuthenticated = false;
         this.loggedinUserEmail = null;
       }
     });
-    
+    this.subscription2 = this.settingsService.settingsChanged.subscribe(newSettings => {
+      this.allowRegistration = newSettings.allowRegistration;
+    });
   }
 
   ngOnDestroy(): void {
-    this.subscription.unsubscribe();
+    this.subscription1.unsubscribe();
   }
 
   onLogout(): void {

@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormArray, FormControl, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { AppResources } from 'src/app/app-resources';
-import { AuthService } from '../auth.service';
+import { AuthService } from '../../../services/auth.service';
 
 const reEmail = AppResources.EMAIL_REGEX;
 
