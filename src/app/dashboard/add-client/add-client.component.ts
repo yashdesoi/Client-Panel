@@ -1,10 +1,10 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { FlashMessagesService } from 'angular2-flash-messages';
 import { Subscription } from 'rxjs';
-import { ClientManagementService } from 'src/app/dashboard/client-management/client-management.service';
-import { AppResources } from '../../../app-resources';
+import { ClientManagementService } from 'src/services/client-management.service';
+import { SettingsService } from 'src/services/settings.service';
+import { AppResources } from '../../app-resources';
 
 const rePhone = AppResources.PHONE_REGEX;
 const reEmail = AppResources.EMAIL_REGEX;
@@ -15,7 +15,7 @@ const reEmail = AppResources.EMAIL_REGEX;
   styleUrls: ['./add-client.component.css']
 })
 export class AddClientComponent implements OnInit, OnDestroy {
-  disableBalanceOnAdd = false;
+  disableBalanceOnAdd = this.settingsService.settings.disableBalanceOnAdd;
   form: FormGroup;
   firstName = new FormControl('', Validators.required);
   lastName = new FormControl('', Validators.required);
@@ -42,6 +42,7 @@ export class AddClientComponent implements OnInit, OnDestroy {
 
   constructor(private router: Router,
               private route: ActivatedRoute,
+              private settingsService: SettingsService,
               private clientManagementService: ClientManagementService) { }
 
   ngOnInit(): void {

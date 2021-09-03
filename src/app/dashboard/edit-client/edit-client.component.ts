@@ -2,9 +2,10 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Subscription } from 'rxjs';
-import { ClientManagementService } from 'src/app/dashboard/client-management/client-management.service';
+import { ClientManagementService } from 'src/services/client-management.service';
+import { SettingsService } from 'src/services/settings.service';
 import { Client } from 'src/models/Client';
-import { AppResources } from '../../../app-resources';
+import { AppResources } from '../../app-resources';
 
 const rePhone = AppResources.PHONE_REGEX;
 const reEmail = AppResources.EMAIL_REGEX;
@@ -15,6 +16,7 @@ const reEmail = AppResources.EMAIL_REGEX;
   styleUrls: ['./edit-client.component.css']
 })
 export class EditClientComponent implements OnInit, OnDestroy {
+  disableBalanceOnEdit = this.settingsService.settings.disableBalanceOnEdit;
   client: Client;
   clientId: string;
   form: FormGroup;
@@ -28,7 +30,10 @@ export class EditClientComponent implements OnInit, OnDestroy {
     Validators.required,
     Validators.pattern(reEmail)
   ]);
-  balance = new FormControl(0, [
+  balance = new FormControl({
+    value: 0,
+    disabled: this.disableBalanceOnEdit
+  }, [
     Validators.required,
     Validators.min(0)
   ]);
@@ -39,6 +44,7 @@ export class EditClientComponent implements OnInit, OnDestroy {
 
   constructor(private clientManagementService: ClientManagementService,
               private route: ActivatedRoute,
+              private settingsService: SettingsService,
               private router: Router) { }
 
   ngOnInit(): void {
@@ -53,7 +59,11 @@ export class EditClientComponent implements OnInit, OnDestroy {
     this.clientId = this.route.snapshot.params.id;
 
     this.subscription1 = this.clientManagementService.getClient(this.clientId).subscribe(client => {
-      this.client = client;
+      if (client) {
+        this.client = client;
+      } else {
+        this.router.navigate(['/not-found']);
+      }
       this.form.patchValue(this.client);
       this.form.markAllAsTouched();
     });

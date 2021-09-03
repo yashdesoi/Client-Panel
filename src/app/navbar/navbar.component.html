@@ -3,16 +3,23 @@
     <a class="navbar-brand"
        routerLink="/">Client Panel</a>
     <ul class="navbar-nav">
-      <ng-container *ngIf="isAuthenticated; else auth">
-        <li class="nav-item active">
-          <a class="nav-link">{{ loggedinUserEmail }}</a>
+      <ng-container *ngIf="isAuthenticated">
+        <li class="nav-item">
+          <a class="nav-link"
+             routerLink="/clients"
+             routerLinkActive="active">{{ loggedinUserEmail }}</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link"
+             routerLink="/settings"
+             routerLinkActive="active">Settings</a>
         </li>
         <li class="nav-item">
           <a class="nav-link logout-btn"
              (click)="onLogout()">Logout</a>
         </li>
       </ng-container>
-      <ng-template #auth>
+      <ng-container *ngIf="!isAuthenticated && allowRegistration">
         <li class="nav-item">
           <a class="nav-link"
              routerLink="/login"
@@ -23,7 +30,7 @@
              routerLink="/register"
              routerLinkActive="active">Register</a>
         </li>
-      </ng-template>
+      </ng-container>
     </ul>
   </div>
 </nav>

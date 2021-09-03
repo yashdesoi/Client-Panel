@@ -1,6 +1,6 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Subscription } from 'rxjs';
-import { ClientManagementService } from 'src/app/dashboard/client-management/client-management.service';
+import { ClientManagementService } from 'src/services/client-management.service';
 import { Client } from 'src/models/Client';
 
 @Component({

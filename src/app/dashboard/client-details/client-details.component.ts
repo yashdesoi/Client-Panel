@@ -1,8 +1,7 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { FlashMessagesService } from 'angular2-flash-messages';
 import { Subscription } from 'rxjs';
-import { ClientManagementService } from 'src/app/dashboard/client-management/client-management.service';
+import { ClientManagementService } from 'src/services/client-management.service';
 import { Client } from 'src/models/Client';
 
 @Component({
@@ -19,13 +18,16 @@ export class ClientDetailsComponent implements OnInit, OnDestroy {
 
   constructor(private route: ActivatedRoute,
               private router: Router,
-              private clientManagementService: ClientManagementService,
-              private flashMessageService: FlashMessagesService) { }
+              private clientManagementService: ClientManagementService) { }
 
   ngOnInit(): void {
     const clientId = this.route.snapshot.params.id;
     this.subscription = this.clientManagementService.getClient(clientId).subscribe(client => {
-      this.client = client;
+      if (client) {
+        this.client = client;
+      } else {
+        this.router.navigate(['not-found']);
+      }
       this.showSpinner = false;
     });
   }

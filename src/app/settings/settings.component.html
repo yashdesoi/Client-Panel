@@ -1,1 +1,48 @@
-<p>settings works!</p>
+<div class="row">
+  <div class="col-12">
+    <a class="btn btn-link"
+       routerLink="/">
+      <i class="fa fa-arrow-circle-o-left"></i> Back to dashboard
+    </a>
+  </div>
+  <div class="col-md-6 mx-auto">
+    <div class="card">
+      <div class="card-header text-center">
+        Settings
+      </div>
+      <div class="card-body">
+        <form (ngSubmit)="onSaveSettings()"
+              [formGroup]="form">
+          <div class="custom-control custom-switch">
+            <input type="checkbox"
+                   class="custom-control-input" 
+                   id="allow-registration"
+                   formControlName="allowRegistration">
+            <label class="custom-control-label" 
+                   for="allow-registration">Allow registration</label>
+          </div>
+          <div class="custom-control custom-switch">
+            <input type="checkbox"
+                   class="custom-control-input" 
+                   id="disable-balance-add"
+                   formControlName="disableBalanceOnAdd">
+            <label class="custom-control-label" 
+                   for="disable-balance-add">Disable balance on Add</label>
+          </div>
+          <div class="custom-control custom-switch">
+            <input type="checkbox"
+                   class="custom-control-input" 
+                   id="disable-balance-edit"
+                   formControlName="disableBalanceOnEdit">
+            <label class="custom-control-label" 
+                   for="disable-balance-edit">Disable balance on Edit</label>
+          </div>
+          <div class="my-2 text-center">
+            <button type="submit"
+                    class="btn btn-success">Save</button>
+          </div>
+        </form>    
+      </div>
+    </div>
+  </div>
+</div>
