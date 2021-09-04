@@ -26,7 +26,7 @@
 
     <ng-template #spinner>
       <div class="d-flex justify-content-center my-4"
-         *ngIf="showSpinner">
+           *ngIf="showSpinner">
         <div class="spinner-border text-secondary" role="status">
           <span class="sr-only">Loading...</span>
         </div> 
@@ -35,13 +35,31 @@
 
   </div>
   <div class="col">
-    <a class="btn btn-block btn-dark"
-       routerLink="edit">
-       <i class="fa fa-pencil" aria-hidden="true"></i> Edit
-      </a>
+    <button class="btn btn-block btn-dark"
+            [disabled]="showSpinner"
+            [style.cursor]="showSpinner ? 'not-allowed' : ''"
+            routerLink="edit">
+      <span class="spinner-border spinner-border-sm"
+            role="status"
+            aria-hidden="true"
+            *ngIf="showSpinner"></span>
+      <i class="fa fa-pencil"
+         aria-hidden="true"
+         *ngIf="!showSpinner"></i>
+      Edit
+    </button>
     <button class="btn btn-block btn-danger"
+            [disabled]="showSpinner"
+            [style.cursor]="showSpinner ? 'not-allowed' : ''"
             (click)="onDeleteClient()">
-      <i class="fa fa-trash" aria-hidden="true"></i> Delete
+      <span class="spinner-border spinner-border-sm"
+            role="status"
+            aria-hidden="true"
+            *ngIf="showSpinner"></span>
+      <i class="fa fa-trash"
+         aria-hidden="true"
+         *ngIf="!showSpinner"></i>
+      Delete
     </button>
   </div>
 </div>

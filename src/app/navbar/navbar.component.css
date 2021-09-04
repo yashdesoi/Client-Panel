@@ -1,3 +1,7 @@
+.navbar-brand {
+  font-size: 25px;
+}
+
 .logout-btn {
   cursor: pointer;
 }

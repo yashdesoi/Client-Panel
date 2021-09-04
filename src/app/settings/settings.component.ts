@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
+import { Router } from '@angular/router';
 import { Settings } from 'src/models/Settings';
 import { SettingsService } from 'src/services/settings.service';
 
@@ -12,7 +13,8 @@ export class SettingsComponent implements OnInit {
   form: FormGroup;
   settings: Settings;
 
-  constructor(private settingsService: SettingsService) { }
+  constructor(private settingsService: SettingsService,
+              private router: Router) { }
 
   ngOnInit(): void {
     this.settings = { ...this.settingsService.settings };
@@ -25,6 +27,7 @@ export class SettingsComponent implements OnInit {
 
   onSaveSettings() {
     this.settingsService.saveSettings(this.form.value);
+    this.router.navigate(['/']);
   }
 
 }

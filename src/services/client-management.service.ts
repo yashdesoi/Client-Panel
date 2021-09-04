@@ -20,8 +20,8 @@ export class ClientManagementService {
   constructor(private fireStore: AngularFirestore,
               private flashMessageService: FlashMessagesService) {}
 
-  getClients(): Observable<Client[]> {
-    this.initClients();  
+  getClients(userId: string): Observable<Client[]> {
+    this.initClients(userId);
     return this.clientsCollection
       .snapshotChanges()
       .pipe(map(
@@ -35,8 +35,8 @@ export class ClientManagementService {
       ));
   }
 
-  getClient(id: string): Observable<Client> {
-    this.initClient(id);
+  getClient(userId: string, clientId: string): Observable<Client> {
+    this.initClient(userId, clientId);
     return this.clientDocument
       .snapshotChanges()
       .pipe(map(
@@ -50,14 +50,14 @@ export class ClientManagementService {
       ));
   }
 
-  addClient(data): void {
-    this.subscription = this.checkForDuplicateEmail(data.email)
+  addClient(userId: string, data): void {
+    this.subscription = this.checkForDuplicateEmail(userId, data.email)
       .subscribe(isDuplicate => {
         if (isDuplicate) {
           this.clientAdded.next(false);
           this.showFlashMessage('Following email already exists', false);
         } else {
-          this.initClients();
+          this.initClients(userId);
           this.clientsCollection.add(data);
           this.clientAdded.next(true);
           this.showFlashMessage('Client added successfully', true);
@@ -66,15 +66,15 @@ export class ClientManagementService {
       });
   }
 
-  updateClient(client: Client, isEmailUpdated: boolean): void {
+  updateClient(userId: string, client: Client, isEmailUpdated: boolean): void {
     if (isEmailUpdated) {
-      this.subscription = this.checkForDuplicateEmail(client.email)
+      this.subscription = this.checkForDuplicateEmail(userId, client.email)
         .subscribe(isDuplicate => {
           if (isDuplicate) {
             this.clientUpdated.next(false);
-            this.showFlashMessage('Following email already taken', false);
+            this.showFlashMessage('Client with following email already exist', false);
           } else {
-            this.initClient(client.id);
+            this.initClient(userId, client.id);
             this.clientDocument.update(client);
             this.clientUpdated.next(true);
             this.showFlashMessage('Client updated successfully', true);
@@ -82,34 +82,33 @@ export class ClientManagementService {
           this.subscription.unsubscribe();
         });
     } else {
-      this.initClient(client.id);
+      this.initClient(userId, client.id);
       this.clientDocument.update(client);
       this.clientUpdated.next(true);
       this.showFlashMessage('Client updated successfully', true);
     }
   }
 
-  deleteClient(id: string): void {
-    this.initClient(id);
+  deleteClient(userId: string, clientId: string): void {
+    this.initClient(userId, clientId);
     this.clientDocument.delete();
     this.showFlashMessage('Client removed successfully', true);
   }
 
-  private initClients(): void {
-    this.clientsCollection = this.fireStore.collection('clients', ref => {
+  private initClients(userId: string): void {
+    this.clientsCollection = this.fireStore.collection(userId, ref => {
       return ref.orderBy('lastName', 'desc');
     });
   }
 
-  private initClient(id: string): void {
-    this.clientDocument = this.fireStore.doc(`clients/${id}`);
+  private initClient(userId: string, clientId: string): void {
+    this.clientDocument = this.fireStore.doc(`${userId}/${clientId}`);
   }
 
-  private checkForDuplicateEmail(email: string): Observable<boolean> {
-    this.clientsCollection = this.fireStore.collection('clients', ref => {
+  private checkForDuplicateEmail(userId: string, email: string): Observable<boolean> {
+    this.clientsCollection = this.fireStore.collection(userId, ref => {
       return ref.where('email', '==', email);
     });
-
     return this.clientsCollection
       .snapshotChanges()
       .pipe(map(changes => {

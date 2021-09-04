@@ -12,7 +12,7 @@ import { SettingsService } from '../../services/settings.service';
 export class NavbarComponent implements OnInit, OnDestroy {
   isAuthenticated: boolean;
   loggedinUserEmail: string;
-  allowRegistration: boolean;
+  allowRegistration = this.settingsService.settings.allowRegistration;
 
   // Subscriptions
   private subscription1: Subscription;
@@ -32,6 +32,7 @@ export class NavbarComponent implements OnInit, OnDestroy {
         this.loggedinUserEmail = null;
       }
     });
+
     this.subscription2 = this.settingsService.settingsChanged.subscribe(newSettings => {
       this.allowRegistration = newSettings.allowRegistration;
     });

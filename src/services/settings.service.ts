@@ -25,12 +25,11 @@ export class SettingsService {
 
   saveSettings(newSettings) {
     this.settings = newSettings;
-    this.settingsChanged.next(newSettings);
+    this.settingsChanged.next(this.settings);
     localStorage.setItem('settings', JSON.stringify(this.settings));
     this.flashMessageService.show('Settings saved', {
       cssClass: 'alert alert-success',
       timeout: 4000
     });
-    this.router.navigate(['/']);
   }
 }

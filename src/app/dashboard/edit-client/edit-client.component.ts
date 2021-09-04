@@ -6,6 +6,7 @@ import { ClientManagementService } from 'src/services/client-management.service'
 import { SettingsService } from 'src/services/settings.service';
 import { Client } from 'src/models/Client';
 import { AppResources } from '../../app-resources';
+import { AuthService } from 'src/services/auth.service';
 
 const rePhone = AppResources.PHONE_REGEX;
 const reEmail = AppResources.EMAIL_REGEX;
@@ -17,8 +18,7 @@ const reEmail = AppResources.EMAIL_REGEX;
 })
 export class EditClientComponent implements OnInit, OnDestroy {
   disableBalanceOnEdit = this.settingsService.settings.disableBalanceOnEdit;
-  client: Client;
-  clientId: string;
+  showSpinner: boolean;
   form: FormGroup;
   firstName = new FormControl('', Validators.required);
   lastName = new FormControl('', Validators.required);
@@ -38,16 +38,23 @@ export class EditClientComponent implements OnInit, OnDestroy {
     Validators.min(0)
   ]);
 
+  private client: Client;
+  private userId: string;
+  private clientId: string;
+
   // Subscriptions
   private subscription1: Subscription;
   private subscription2: Subscription;
+  private subscription3: Subscription;
 
   constructor(private clientManagementService: ClientManagementService,
+              private authService: AuthService,
               private route: ActivatedRoute,
               private settingsService: SettingsService,
               private router: Router) { }
 
   ngOnInit(): void {
+    this.showSpinner = true;
     this.form = new FormGroup({
       'firstName': this.firstName,
       'lastName': this.lastName,
@@ -58,17 +65,23 @@ export class EditClientComponent implements OnInit, OnDestroy {
 
     this.clientId = this.route.snapshot.params.id;
 
-    this.subscription1 = this.clientManagementService.getClient(this.clientId).subscribe(client => {
-      if (client) {
-        this.client = client;
-      } else {
-        this.router.navigate(['/not-found']);
+    this.subscription1 = this.authService.getAuthState.subscribe(firebaseUser => {
+      if (firebaseUser) {
+        this.userId = firebaseUser.uid;
+        this.subscription2 = this.clientManagementService.getClient(this.userId, this.clientId).subscribe(client => {
+          if (client) {
+            this.client = client;
+            this.showSpinner = false;
+          } else {
+            this.router.navigate(['/not-found']);
+          }
+          this.form.patchValue(this.client);
+          this.form.markAllAsTouched();
+        });
       }
-      this.form.patchValue(this.client);
-      this.form.markAllAsTouched();
     });
 
-    this.subscription2 = this.clientManagementService.clientUpdated.subscribe(isUpdated => {
+    this.subscription3 = this.clientManagementService.clientUpdated.subscribe(isUpdated => {
       if (isUpdated) {
         this.router.navigate(['../'], { relativeTo: this.route });
       }
@@ -78,13 +91,14 @@ export class EditClientComponent implements OnInit, OnDestroy {
   ngOnDestroy(): void {
     this.subscription1.unsubscribe();
     this.subscription2.unsubscribe();
+    this.subscription3.unsubscribe();
   }
 
   onUpdateClient() {
     const isEmailUpdated = this.isEmailUpdated;
     const client: Client = this.form.value;
     client.id = this.clientId;
-    this.clientManagementService.updateClient(client, isEmailUpdated);
+    this.clientManagementService.updateClient(this.userId, client, isEmailUpdated);
   }
 
   private get isEmailUpdated() {

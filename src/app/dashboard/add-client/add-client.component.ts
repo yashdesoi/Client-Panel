@@ -2,6 +2,7 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Subscription } from 'rxjs';
+import { AuthService } from 'src/services/auth.service';
 import { ClientManagementService } from 'src/services/client-management.service';
 import { SettingsService } from 'src/services/settings.service';
 import { AppResources } from '../../app-resources';
@@ -16,6 +17,7 @@ const reEmail = AppResources.EMAIL_REGEX;
 })
 export class AddClientComponent implements OnInit, OnDestroy {
   disableBalanceOnAdd = this.settingsService.settings.disableBalanceOnAdd;
+  showSpinner: boolean;
   form: FormGroup;
   firstName = new FormControl('', Validators.required);
   lastName = new FormControl('', Validators.required);
@@ -36,16 +38,20 @@ export class AddClientComponent implements OnInit, OnDestroy {
       Validators.min(0)
     ]
   );
+  private userId: string;
 
   // Subscriptions
-  private subscription: Subscription;
+  private subscription1: Subscription;
+  private subscription2: Subscription;
 
   constructor(private router: Router,
               private route: ActivatedRoute,
+              private authService: AuthService,
               private settingsService: SettingsService,
               private clientManagementService: ClientManagementService) { }
 
   ngOnInit(): void {
+    this.showSpinner = true;
     this.form = new FormGroup({
       'name': new FormGroup({
         'firstName': this.firstName,
@@ -56,7 +62,14 @@ export class AddClientComponent implements OnInit, OnDestroy {
       'balance': this.balance
     });
 
-    this.subscription = this.clientManagementService.clientAdded.subscribe(isAdded => {
+    this.subscription1 = this.authService.getAuthState.subscribe(firebaseUser => {
+      if (firebaseUser) {
+        this.userId = firebaseUser.uid;
+        this.showSpinner = false;
+      }
+    });
+
+    this.subscription2 = this.clientManagementService.clientAdded.subscribe(isAdded => {
       if (isAdded) {
         this.router.navigate(['../'], { relativeTo: this.route });
       }
@@ -64,12 +77,12 @@ export class AddClientComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    this.subscription.unsubscribe();
+    this.subscription2.unsubscribe();
   }
 
   onAddClient() {
     const value = this.getFormValue();
-    this.clientManagementService.addClient(value);
+    this.clientManagementService.addClient(this.userId, value);
   }
 
   private getFormValue() {
