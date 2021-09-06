@@ -73,6 +73,7 @@ export class AddClientComponent implements OnInit, OnDestroy {
       if (isAdded) {
         this.router.navigate(['../'], { relativeTo: this.route });
       }
+      this.showSpinner = false;
     });
   }
 
@@ -81,6 +82,7 @@ export class AddClientComponent implements OnInit, OnDestroy {
   }
 
   onAddClient() {
+    this.showSpinner = true;
     const value = this.getFormValue();
     this.clientManagementService.addClient(this.userId, value);
   }

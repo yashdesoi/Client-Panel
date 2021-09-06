@@ -12,6 +12,7 @@ const reEmail = AppResources.EMAIL_REGEX;
   styleUrls: ['./register.component.css']
 })
 export class RegisterComponent implements OnInit {
+  isSubmitted = false;
   form: FormGroup;
   email = new FormControl(null, [
     Validators.required,
@@ -59,11 +60,16 @@ export class RegisterComponent implements OnInit {
   }
 
   onRegister(): void {
+    this.isSubmitted = true;
     this.authService.register(this.email.value, this.password.value)
       .then(data => {
+        this.isSubmitted = false;
         this.router.navigate(['/']);
       })
-      .catch(err => console.log(err.message));
+      .catch(err => {
+        this.isSubmitted = false;
+        console.log(err.message);
+      });
   }
 
 }

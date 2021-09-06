@@ -74,9 +74,15 @@
               </div>
             </div>
             <button class="btn btn-success"
-                    [disabled]="form.invalid"
-                    [style.cursor]="form.invalid ? 'not-allowed' : ''"
-                    type="submit">Submit</button>
+                    [disabled]="form.invalid || isSubmitted"
+                    [style.cursor]="(form.invalid || isSubmitted) ? 'not-allowed' : ''"
+                    type="submit">
+              <span class="spinner-border spinner-border-sm"
+                    role="status"
+                    aria-hidden="true"
+                    *ngIf="isSubmitted"></span>
+              Submit
+            </button>
           </form>
         </div>
     

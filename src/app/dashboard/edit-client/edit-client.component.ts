@@ -85,6 +85,7 @@ export class EditClientComponent implements OnInit, OnDestroy {
       if (isUpdated) {
         this.router.navigate(['../'], { relativeTo: this.route });
       }
+      this.showSpinner = false;
     });
   }
 
@@ -95,6 +96,7 @@ export class EditClientComponent implements OnInit, OnDestroy {
   }
 
   onUpdateClient() {
+    this.showSpinner = true;
     const isEmailUpdated = this.isEmailUpdated;
     const client: Client = this.form.value;
     client.id = this.clientId;
