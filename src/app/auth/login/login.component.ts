@@ -13,6 +13,7 @@ const reEmail = AppResources.EMAIL_REGEX;
   styleUrls: ['./login.component.css']
 })
 export class LoginComponent implements OnInit {
+  isSubmitted = false;
   form: FormGroup;
   email = new FormControl(null, [
     Validators.required,
@@ -31,11 +32,16 @@ export class LoginComponent implements OnInit {
   }
 
   onLogin() {
+    this.isSubmitted = true;
     this.authService.login(this.email.value, this.password.value)
       .then(data => {
+        this.isSubmitted = false;
         this.router.navigate(['/']);
       })
-      .catch(err => console.log(err.message));
+      .catch(err => {
+        this.isSubmitted = false;
+        console.log(err.message)
+      });
   }
 
 }
