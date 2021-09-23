@@ -44,6 +44,7 @@ export class ClientDetailsComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
+    this.subscription1.unsubscribe();
     this.subscription2.unsubscribe();
   }
 
