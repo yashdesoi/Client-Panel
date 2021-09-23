@@ -16,6 +16,7 @@ import { FlashMessagesModule } from 'angular2-flash-messages';
 import { AuthModule } from './auth/auth.module';
 import { DashboardModule } from './dashboard/dashboard.module';
 import { ServiceWorkerModule } from '@angular/service-worker';
+import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 
 @NgModule({
   declarations: [
@@ -31,17 +32,18 @@ import { ServiceWorkerModule } from '@angular/service-worker';
     AngularFirestoreModule,
     AngularFireAuthModule,
     FlashMessagesModule.forRoot(),
-
-    // Custom
-    AuthModule,
-    DashboardModule,
-    AppRoutingModule,
     ServiceWorkerModule.register('ngsw-worker.js', {
       enabled: env.production,
       // Register the ServiceWorker as soon as the app is stable
       // or after 30 seconds (whichever comes first).
       registrationStrategy: 'registerWhenStable:30000'
-    })
+    }),
+    NgbModule,
+
+    // Custom
+    AuthModule,
+    DashboardModule,
+    AppRoutingModule
   ],
   bootstrap: [AppComponent]
 })

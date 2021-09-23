@@ -1,34 +1,43 @@
-<nav class="navbar navbar-expand navbar-dark bg-primary mb-3">
-  <div class="container">
-    <a class="navbar-brand h1 mb-0"
-       routerLink="/">Client Panel</a>
+<nav class="navbar navbar-expand-sm navbar-dark bg-primary mb-3">
+  <a class="navbar-brand h1 mb-0"
+     routerLink="/">Client Panel</a>
+
+  <button class="navbar-toggler" type="button" (click)="isMenuCollapsed = !isMenuCollapsed">
+    &#9776;
+  </button>
+
+  <div [ngbCollapse]="isMenuCollapsed" class="collapse navbar-collapse">
     <ul class="navbar-nav">
       <ng-container *ngIf="isAuthenticated">
         <li class="nav-item">
           <a class="nav-link"
              routerLink="/clients"
-             routerLinkActive="active">{{ loggedinUserEmail }}</a>
+             routerLinkActive="active"
+             (click)="isMenuCollapsed = true;">{{ username }}</a>
         </li>
         <li class="nav-item">
           <a class="nav-link"
              routerLink="/settings"
-             routerLinkActive="active">Settings</a>
+             routerLinkActive="active"
+             (click)="isMenuCollapsed = true;">Settings</a>
         </li>
         <li class="nav-item">
           <a class="nav-link logout-btn"
-             (click)="onLogout()">Logout</a>
+             (click)="isMenuCollapsed = true; onLogout();">Logout</a>
         </li>
       </ng-container>
       <ng-container *ngIf="!isAuthenticated && allowRegistration">
         <li class="nav-item">
           <a class="nav-link"
              routerLink="/login"
-             routerLinkActive="active">Login</a>
+             routerLinkActive="active"
+             (click)="isMenuCollapsed = true;">Login</a>
         </li>
         <li class="nav-item">
           <a class="nav-link"
              routerLink="/register"
-             routerLinkActive="active">Register</a>
+             routerLinkActive="active"
+             (click)="isMenuCollapsed = true;">Register</a>
         </li>
       </ng-container>
     </ul>

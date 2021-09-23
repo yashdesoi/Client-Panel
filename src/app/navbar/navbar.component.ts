@@ -11,8 +11,9 @@ import { SettingsService } from '../../services/settings.service';
 })
 export class NavbarComponent implements OnInit, OnDestroy {
   isAuthenticated: boolean;
-  loggedinUserEmail: string;
+  username: string;
   allowRegistration = this.settingsService.settings.allowRegistration;
+  isMenuCollapsed = true;
 
   // Subscriptions
   private subscription1: Subscription;
@@ -26,10 +27,10 @@ export class NavbarComponent implements OnInit, OnDestroy {
     this.subscription1 = this.authService.getAuthState.subscribe(firebaseUser => {
       if (firebaseUser) {
         this.isAuthenticated = true;
-        this.loggedinUserEmail = firebaseUser.email;
+        this.username = this.getUsername(firebaseUser.email);
       } else {
         this.isAuthenticated = false;
-        this.loggedinUserEmail = null;
+        this.username = null;
       }
     });
 
@@ -40,6 +41,7 @@ export class NavbarComponent implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
     this.subscription1.unsubscribe();
+    this.subscription2.unsubscribe();
   }
 
   onLogout(): void {
@@ -50,6 +52,10 @@ export class NavbarComponent implements OnInit, OnDestroy {
           this.router.navigate(['/login']);
         });
     }
+  }
+
+  private getUsername(email: string): string {
+    return email.split('@')[0];
   }
 
 }
