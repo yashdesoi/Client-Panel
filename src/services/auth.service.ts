@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { AngularFireAuth } from '@angular/fire/auth';
 import { FlashMessagesService } from 'angular2-flash-messages';
+import firebase from 'firebase/app';
 
 @Injectable({
   providedIn: 'root'
@@ -20,6 +21,22 @@ export class AuthService {
         .catch(err => {
           reject(err);
           this.showMessage('Incorrect email or password', false);
+        });
+    });
+  }
+
+  loginWithGoogle(): Promise<any> {
+    return new Promise((resolve, reject) => {
+      this.angularFireAuth.signInWithPopup(new firebase.auth.GoogleAuthProvider())
+        .then(userData => {
+          resolve(userData);
+          this.showMessage('You are now logged in', true);
+        })
+        .catch(err => {
+          reject(err);
+          if (err.code === 'auth/network-request-failed') {
+            this.showMessage('Network error', false);
+          }
         });
     });
   }
