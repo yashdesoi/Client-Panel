@@ -1,0 +1,15 @@
+.separator {
+  width: 100%; 
+  text-align: center; 
+  border-bottom: 1px solid gray; 
+  line-height: 0.1em;
+  margin: 35px 0; 
+}
+
+.separator > span {
+  color: gray;
+  font-size: 14px;
+  font-weight: bold;
+  background:#fff; 
+  padding: 0 10px;
+}
