@@ -4,9 +4,7 @@ import { FlashMessagesService } from 'angular2-flash-messages';
 import { Subject } from 'rxjs';
 import { Settings } from 'src/models/Settings';
 
-@Injectable({
-  providedIn: 'root'
-})
+@Injectable()
 export class SettingsService {
   settingsChanged = new Subject<Settings>();
   settings: Settings = {

@@ -5,6 +5,8 @@ import { LoginComponent } from './login/login.component';
 import { RegisterComponent } from './register/register.component';
 import { AuthRoutingModule } from './auth-routing.module';
 import { LoginGoogleComponent } from './login-google/login-google.component';
+import { AuthGuard } from './auth.guard';
+import { SharedModule } from '../shared/shared.module';
 
 @NgModule({
   declarations: [
@@ -15,7 +17,11 @@ import { LoginGoogleComponent } from './login-google/login-google.component';
   imports: [
     CommonModule,
     ReactiveFormsModule,
-    AuthRoutingModule
+    AuthRoutingModule,
+    SharedModule
+  ],
+  providers: [
+    AuthGuard
   ]
 })
 export class AuthModule { }
