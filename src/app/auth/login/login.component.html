@@ -47,16 +47,16 @@
                              password.dirty) &&
                              password.errors?.required">Password is required</small>
             </div>
-            <button class="btn btn-success"
-                    [disabled]="form.invalid || isSubmitted"
-                    [style.cursor]="(form.invalid || isSubmitted) ? 'not-allowed' : ''"
-                    type="submit">
-              <span class="spinner-border spinner-border-sm"
-                    role="status"
-                    aria-hidden="true"
-                    *ngIf="isSubmitted"></span>
+
+            <app-loading-button [btnProperties]="{
+              'is-disabled': form.invalid || isSubmitted,
+              'is-loading': isSubmitted,
+              'btn-type': 'submit',
+              'btn-class': 'btn btn-success'
+            }">
               Submit
-            </button>
+            </app-loading-button>
+
           </form>
           <app-login-google></app-login-google>
         </div>

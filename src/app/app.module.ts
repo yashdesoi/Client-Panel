@@ -6,28 +6,25 @@ import { AngularFireAuthModule } from '@angular/fire/auth';
 import { AppRoutingModule } from './app-routing.module';
 
 import { AppComponent } from './app.component';
-import { NavbarComponent } from './navbar/navbar.component';
-import { NotFoundComponent } from './not-found/not-found.component';
-import { SettingsComponent } from './settings/settings.component';
 
 import { environment as env } from 'src/environments/environment';
-import { ReactiveFormsModule } from '@angular/forms';
 import { FlashMessagesModule } from 'angular2-flash-messages';
 import { AuthModule } from './auth/auth.module';
 import { DashboardModule } from './dashboard/dashboard.module';
 import { ServiceWorkerModule } from '@angular/service-worker';
-import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
+import { CoreModule } from './core/core.module';
+import { SharedModule } from './shared/shared.module';
+import { SettingsModule } from './settings/settings.module';
+import { NotFoundModule } from './not-found/not-found.module';
+import { NavbarModule } from './navbar/navbar.module';
+import { AppGuard } from './app.guard';
 
 @NgModule({
   declarations: [
-    AppComponent,
-    NavbarComponent,
-    SettingsComponent,
-    NotFoundComponent
+    AppComponent
   ],
   imports: [
     BrowserModule,
-    ReactiveFormsModule,
     AngularFireModule.initializeApp(env.firebase),
     AngularFirestoreModule,
     AngularFireAuthModule,
@@ -38,12 +35,19 @@ import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
       // or after 30 seconds (whichever comes first).
       registrationStrategy: 'registerWhenStable:30000'
     }),
-    NgbModule,
 
     // Custom
+    CoreModule,
+    SharedModule,
+    SettingsModule,
+    NotFoundModule,
+    NavbarModule,
     AuthModule,
     DashboardModule,
     AppRoutingModule
+  ],
+  providers: [
+    AppGuard
   ],
   bootstrap: [AppComponent]
 })

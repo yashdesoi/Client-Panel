@@ -3,9 +3,7 @@ import { AngularFireAuth } from '@angular/fire/auth';
 import { FlashMessagesService } from 'angular2-flash-messages';
 import firebase from 'firebase/app';
 
-@Injectable({
-  providedIn: 'root'
-})
+@Injectable()
 export class AuthService {
 
   constructor(private angularFireAuth: AngularFireAuth,

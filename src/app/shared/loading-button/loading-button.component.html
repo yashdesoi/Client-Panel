@@ -1,0 +1,10 @@
+<button [class]="btnClass"
+        [disabled]="isDisabled"
+        [style.cursor]="isDisabled ? 'not-allowed' : ''"
+        [type]="btnType">
+  <span class="spinner-border spinner-border-sm"
+        role="status"
+        aria-hidden="true"
+        *ngIf="isLoading"></span>
+  <ng-content></ng-content>
+</button>

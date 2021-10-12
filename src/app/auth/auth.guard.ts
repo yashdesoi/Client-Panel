@@ -6,9 +6,7 @@ import { SettingsService } from '../../services/settings.service';
 import { AuthService } from '../../services/auth.service';
 import { AuthModule } from './auth.module';
 
-@Injectable({
-  providedIn: 'root'
-})
+@Injectable()
 export class AuthGuard implements CanActivate {
 
   constructor(private authService: AuthService,

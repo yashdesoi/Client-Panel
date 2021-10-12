@@ -5,9 +5,7 @@ import { Observable, Subject, Subscription } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { Client } from '../models/Client';
 
-@Injectable({
-  providedIn: 'root'
-})
+@Injectable()
 export class ClientManagementService {
   private clientsCollection: AngularFirestoreCollection;
   private clientDocument: AngularFirestoreDocument;
