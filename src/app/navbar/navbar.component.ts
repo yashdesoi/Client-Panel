@@ -1,6 +1,7 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { Subscription } from 'rxjs';
+import { takeWhile } from 'rxjs/operators';
 import { AuthService } from '../../services/auth.service';
 import { SettingsService } from '../../services/settings.service';
 
@@ -10,38 +11,40 @@ import { SettingsService } from '../../services/settings.service';
   styleUrls: ['./navbar.component.css']
 })
 export class NavbarComponent implements OnInit, OnDestroy {
-  isAuthenticated: boolean;
-  username: string;
-  allowRegistration = this.settingsService.settings.allowRegistration;
-  isMenuCollapsed = true;
-
-  // Subscriptions
-  private subscription1: Subscription;
-  private subscription2: Subscription;
+  public isAuthenticated: boolean;
+  public username: string;
+  public allowRegistration = this.settingsService.settings.allowRegistration;
+  public isMenuCollapsed = true;
+  private alive: boolean;  
 
   constructor(private authService: AuthService,
               private settingsService: SettingsService,
               private router: Router) {}
 
   ngOnInit(): void {
-    this.subscription1 = this.authService.getAuthState.subscribe(firebaseUser => {
-      if (firebaseUser) {
-        this.isAuthenticated = true;
-        this.username = this.getUsername(firebaseUser.email);
-      } else {
-        this.isAuthenticated = false;
-        this.username = null;
-      }
-    });
+    this.alive = true;
 
-    this.subscription2 = this.settingsService.settingsChanged.subscribe(newSettings => {
-      this.allowRegistration = newSettings.allowRegistration;
-    });
+    this.authService.getAuthState
+      .pipe(takeWhile(() => this.alive))
+      .subscribe(firebaseUser => {
+        if (firebaseUser) {
+          this.isAuthenticated = true;
+          this.username = this.getUsername(firebaseUser.email);
+        } else {
+          this.isAuthenticated = false;
+          this.username = null;
+        }
+      });
+
+    this.settingsService.settingsChanged
+      .pipe(takeWhile(() => this.alive))
+      .subscribe(newSettings => {
+        this.allowRegistration = newSettings.allowRegistration;
+      });
   }
 
   ngOnDestroy(): void {
-    this.subscription1.unsubscribe();
-    this.subscription2.unsubscribe();
+    this.alive = false;
   }
 
   onLogout(): void {

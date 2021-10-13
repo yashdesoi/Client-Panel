@@ -2,6 +2,7 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Subscription } from 'rxjs';
+import { takeWhile } from 'rxjs/operators';
 import { AuthService } from 'src/services/auth.service';
 import { ClientManagementService } from 'src/services/client-management.service';
 import { SettingsService } from 'src/services/settings.service';
@@ -16,20 +17,20 @@ const reEmail = AppResources.EMAIL_REGEX;
   styleUrls: ['./add-client.component.css']
 })
 export class AddClientComponent implements OnInit, OnDestroy {
-  disableBalanceOnAdd = this.settingsService.settings.disableBalanceOnAdd;
-  showSpinner: boolean;
-  form: FormGroup;
-  firstName = new FormControl('', Validators.required);
-  lastName = new FormControl('', Validators.required);
-  phone = new FormControl('', [
+  public disableBalanceOnAdd = this.settingsService.settings.disableBalanceOnAdd;
+  public showSpinner: boolean;
+  public form: FormGroup;
+  public firstName = new FormControl('', Validators.required);
+  public lastName = new FormControl('', Validators.required);
+  public phone = new FormControl('', [
     Validators.required,
     Validators.pattern(rePhone)
   ]);
-  email = new FormControl('', [
+  public email = new FormControl('', [
     Validators.required,
     Validators.pattern(reEmail)
   ]);
-  balance = new FormControl(
+  public balance = new FormControl(
     {
       value: 0,
       disabled: this.disableBalanceOnAdd
@@ -39,10 +40,7 @@ export class AddClientComponent implements OnInit, OnDestroy {
     ]
   );
   private userId: string;
-
-  // Subscriptions
-  private subscription1: Subscription;
-  private subscription2: Subscription;
+  private alive: boolean;
 
   constructor(private router: Router,
               private route: ActivatedRoute,
@@ -51,6 +49,7 @@ export class AddClientComponent implements OnInit, OnDestroy {
               private clientManagementService: ClientManagementService) { }
 
   ngOnInit(): void {
+    this.alive = true;
     this.showSpinner = true;
     this.form = new FormGroup({
       'name': new FormGroup({
@@ -62,24 +61,27 @@ export class AddClientComponent implements OnInit, OnDestroy {
       'balance': this.balance
     });
 
-    this.subscription1 = this.authService.getAuthState.subscribe(firebaseUser => {
-      if (firebaseUser) {
-        this.userId = firebaseUser.uid;
-        this.showSpinner = false;
-      }
-    });
+    this.authService.getAuthState
+      .pipe(takeWhile(() => this.alive))
+      .subscribe(firebaseUser => {
+        if (firebaseUser) {
+          this.userId = firebaseUser.uid;
+          this.showSpinner = false;
+        }
+      });
 
-    this.subscription2 = this.clientManagementService.clientAdded.subscribe(isAdded => {
-      if (isAdded) {
-        this.router.navigate(['../'], { relativeTo: this.route });
-      }
-      this.showSpinner = false;
-    });
+    this.clientManagementService.clientAdded
+      .pipe(takeWhile(() => this.alive))
+      .subscribe(isAdded => {
+        if (isAdded) {
+          this.router.navigate(['../'], { relativeTo: this.route });
+        }
+        this.showSpinner = false;
+      });
   }
 
   ngOnDestroy(): void {
-    this.subscription1.unsubscribe();
-    this.subscription2.unsubscribe();
+    this.alive = false;
   }
 
   onAddClient() {

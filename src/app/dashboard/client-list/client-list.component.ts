@@ -3,6 +3,7 @@ import { Subscription } from 'rxjs';
 import { ClientManagementService } from 'src/services/client-management.service';
 import { Client } from 'src/models/Client';
 import { AuthService } from 'src/services/auth.service';
+import { takeWhile } from 'rxjs/operators';
 
 @Component({
   selector: 'app-client-list',
@@ -10,35 +11,36 @@ import { AuthService } from 'src/services/auth.service';
   styleUrls: ['./client-list.component.css']
 })
 export class ClientListComponent implements OnInit, OnDestroy {
-  clients: Client[] = [];
-  showSpinner: boolean;
-  totalOwed: number;
-  
-  // Subscriptions
-  private subscription1: Subscription;
-  private subscription2: Subscription;
+  public clients: Client[] = [];
+  public showSpinner: boolean;
+  public totalOwed: number;
+  private alive: boolean;
   
   constructor(private clientManagementService: ClientManagementService,
               private authService: AuthService) { }
 
   ngOnInit(): void {
+    this.alive = true;
     this.showSpinner = true;
-    this.subscription1 = this.authService.getAuthState.subscribe(firebaseUser => {  
-      if (firebaseUser) {
-        this.subscription2 = this.clientManagementService.getClients(firebaseUser.uid).subscribe(clients => {
-          this.totalOwed = 0;
-          this.clients = clients;
-          this.calculateTotalOwed();
-          this.showSpinner = false;
-        });
-      }
-    });
+    this.authService.getAuthState
+      .pipe(takeWhile(() => this.alive))
+      .subscribe(firebaseUser => {  
+        if (firebaseUser) {
+          this.clientManagementService.getClients(firebaseUser.uid)
+            .pipe(takeWhile(() => this.alive))
+            .subscribe(clients => {
+              this.totalOwed = 0;
+              this.clients = clients;
+              this.calculateTotalOwed();
+              this.showSpinner = false;
+            });
+        }
+      });
 
   }
 
   ngOnDestroy(): void {
-    this.subscription1.unsubscribe();
-    this.subscription2.unsubscribe();
+    this.alive = false;
   }
 
   public getFullname(client: Client) {

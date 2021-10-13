@@ -7,6 +7,7 @@ import { SettingsService } from 'src/services/settings.service';
 import { Client } from 'src/models/Client';
 import { AppResources } from '../../app-resources';
 import { AuthService } from 'src/services/auth.service';
+import { takeWhile } from 'rxjs/operators';
 
 const rePhone = AppResources.PHONE_REGEX;
 const reEmail = AppResources.EMAIL_REGEX;
@@ -17,20 +18,20 @@ const reEmail = AppResources.EMAIL_REGEX;
   styleUrls: ['./edit-client.component.css']
 })
 export class EditClientComponent implements OnInit, OnDestroy {
-  disableBalanceOnEdit = this.settingsService.settings.disableBalanceOnEdit;
-  showSpinner: boolean;
-  form: FormGroup;
-  firstName = new FormControl('', Validators.required);
-  lastName = new FormControl('', Validators.required);
-  phone = new FormControl('', [
+  public disableBalanceOnEdit = this.settingsService.settings.disableBalanceOnEdit;
+  public showSpinner: boolean;
+  public form: FormGroup;
+  public firstName = new FormControl('', Validators.required);
+  public lastName = new FormControl('', Validators.required);
+  public phone = new FormControl('', [
     Validators.required,
     Validators.pattern(rePhone)
   ]);
-  email = new FormControl('', [
+  public email = new FormControl('', [
     Validators.required,
     Validators.pattern(reEmail)
   ]);
-  balance = new FormControl({
+  public balance = new FormControl({
     value: 0,
     disabled: this.disableBalanceOnEdit
   }, [
@@ -41,11 +42,7 @@ export class EditClientComponent implements OnInit, OnDestroy {
   private client: Client;
   private userId: string;
   private clientId: string;
-
-  // Subscriptions
-  private subscription1: Subscription;
-  private subscription2: Subscription;
-  private subscription3: Subscription;
+  private alive: boolean;
 
   constructor(private clientManagementService: ClientManagementService,
               private authService: AuthService,
@@ -54,6 +51,7 @@ export class EditClientComponent implements OnInit, OnDestroy {
               private router: Router) { }
 
   ngOnInit(): void {
+    this.alive = true;
     this.showSpinner = true;
     this.form = new FormGroup({
       'firstName': this.firstName,
@@ -65,34 +63,38 @@ export class EditClientComponent implements OnInit, OnDestroy {
 
     this.clientId = this.route.snapshot.params.id;
 
-    this.subscription1 = this.authService.getAuthState.subscribe(firebaseUser => {
-      if (firebaseUser) {
-        this.userId = firebaseUser.uid;
-        this.subscription2 = this.clientManagementService.getClient(this.userId, this.clientId).subscribe(client => {
-          if (client) {
-            this.client = client;
-            this.showSpinner = false;
-          } else {
-            this.router.navigate(['/not-found']);
-          }
-          this.form.patchValue(this.client);
-          this.form.markAllAsTouched();
-        });
-      }
-    });
+    this.authService.getAuthState
+      .pipe(takeWhile(() => this.alive))
+      .subscribe(firebaseUser => {
+        if (firebaseUser) {
+          this.userId = firebaseUser.uid;
+          this.clientManagementService.getClient(this.userId, this.clientId)
+            .pipe(takeWhile(() => this.alive))
+            .subscribe(client => {
+              if (client) {
+                this.client = client;
+                this.showSpinner = false;
+              } else {
+                this.router.navigate(['/not-found']);
+              }
+              this.form.patchValue(this.client);
+              this.form.markAllAsTouched();
+            });
+        }
+      });
 
-    this.subscription3 = this.clientManagementService.clientUpdated.subscribe(isUpdated => {
-      if (isUpdated) {
-        this.router.navigate(['../'], { relativeTo: this.route });
-      }
-      this.showSpinner = false;
-    });
+    this.clientManagementService.clientUpdated
+      .pipe(takeWhile(() => this.alive))
+      .subscribe(isUpdated => {
+        if (isUpdated) {
+          this.router.navigate(['../'], { relativeTo: this.route });
+        }
+        this.showSpinner = false;
+      });
   }
 
   ngOnDestroy(): void {
-    this.subscription1.unsubscribe();
-    this.subscription2.unsubscribe();
-    this.subscription3.unsubscribe();
+    this.alive = false;
   }
 
   onUpdateClient() {

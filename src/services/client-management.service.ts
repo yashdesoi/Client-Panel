@@ -2,18 +2,17 @@ import { Injectable } from '@angular/core';
 import { AngularFirestore, AngularFirestoreCollection, AngularFirestoreDocument } from '@angular/fire/firestore';
 import { FlashMessagesService } from 'angular2-flash-messages';
 import { Observable, Subject, Subscription } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { map, takeWhile } from 'rxjs/operators';
 import { Client } from '../models/Client';
 
 @Injectable()
 export class ClientManagementService {
   private clientsCollection: AngularFirestoreCollection;
+  private alive: boolean;
   private clientDocument: AngularFirestoreDocument;
   public clientAdded = new Subject<boolean>();
   public clientUpdated = new Subject<boolean>();
   
-  // Subscriptions
-  private subscription: Subscription;
 
   constructor(private fireStore: AngularFirestore,
               private flashMessageService: FlashMessagesService) {}
@@ -49,7 +48,9 @@ export class ClientManagementService {
   }
 
   addClient(userId: string, data): void {
-    this.subscription = this.checkForDuplicateEmail(userId, data.email)
+    this.alive = true;
+    this.checkForDuplicateEmail(userId, data.email)
+      .pipe(takeWhile(() => this.alive))
       .subscribe(isDuplicate => {
         if (isDuplicate) {
           this.clientAdded.next(false);
@@ -60,13 +61,15 @@ export class ClientManagementService {
           this.clientAdded.next(true);
           this.showFlashMessage('Client added successfully', true);
         }
-        this.subscription.unsubscribe();
+        this.alive = false;
       });
   }
 
   updateClient(userId: string, client: Client, isEmailUpdated: boolean): void {
     if (isEmailUpdated) {
-      this.subscription = this.checkForDuplicateEmail(userId, client.email)
+      this.alive = true;
+      this.checkForDuplicateEmail(userId, client.email)
+        .pipe(takeWhile(() => this.alive))
         .subscribe(isDuplicate => {
           if (isDuplicate) {
             this.clientUpdated.next(false);
@@ -77,7 +80,7 @@ export class ClientManagementService {
             this.clientUpdated.next(true);
             this.showFlashMessage('Client updated successfully', true);
           }
-          this.subscription.unsubscribe();
+          this.alive = false;
         });
     } else {
       this.initClient(userId, client.id);
