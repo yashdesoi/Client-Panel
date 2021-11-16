@@ -1,3 +1,11 @@
 .logout-btn {
   cursor: pointer;
 }
+
+.collapse.navbar-collapse {
+  justify-content: flex-end;
+}
+
+.nav-link {
+  text-align: center;
+}

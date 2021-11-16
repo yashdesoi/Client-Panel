@@ -2,11 +2,14 @@
   <a class="navbar-brand h1 mb-0"
      routerLink="/">Client Panel</a>
 
-  <button class="navbar-toggler" type="button" (click)="isMenuCollapsed = !isMenuCollapsed">
+  <button class="navbar-toggler"
+          type="button"
+          (click)="isMenuCollapsed = !isMenuCollapsed">
     &#9776;
   </button>
 
-  <div [ngbCollapse]="isMenuCollapsed" class="collapse navbar-collapse">
+  <div [ngbCollapse]="isMenuCollapsed"
+       class="collapse navbar-collapse">
     <ul class="navbar-nav">
       <ng-container *ngIf="isAuthenticated">
         <li class="nav-item">
