@@ -1,6 +1,5 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { Subscription } from 'rxjs';
 import { takeWhile } from 'rxjs/operators';
 import { AuthService } from '../../services/auth.service';
 import { SettingsService } from '../../services/settings.service';

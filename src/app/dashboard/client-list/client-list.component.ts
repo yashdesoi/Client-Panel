@@ -1,5 +1,4 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { Subscription } from 'rxjs';
 import { ClientManagementService } from 'src/services/client-management.service';
 import { Client } from 'src/models/Client';
 import { AuthService } from 'src/services/auth.service';

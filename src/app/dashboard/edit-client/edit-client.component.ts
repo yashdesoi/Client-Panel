@@ -1,7 +1,6 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { Subscription } from 'rxjs';
 import { ClientManagementService } from 'src/services/client-management.service';
 import { SettingsService } from 'src/services/settings.service';
 import { Client } from 'src/models/Client';
